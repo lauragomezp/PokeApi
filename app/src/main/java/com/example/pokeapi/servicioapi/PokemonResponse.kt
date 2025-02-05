@@ -18,10 +18,3 @@ class Pokemon (
         return url.split("/").dropLast(1).last().toInt()
     }
 }
-
-class PokemonDetail (
-    val name:String,
-    val id:Int,
-    val weight:Int,
-    val height:Int,
-)

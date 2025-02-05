@@ -1,10 +1,14 @@
 package com.example.pokeapi.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
@@ -29,11 +33,16 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     var pokemonList: List<Pokemon>? = null
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         context = this
+
+        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        }
 
         mostrarPokemons()
     }
@@ -53,7 +62,9 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
                    pokemonList = pokemonResponse.listaPokemons
                    if (pokemonList != null){
                        if (pokemonList!!.isNotEmpty()){
-                           pokemonAdapter = PokemonAdapter(pokemonList!!)
+                           pokemonAdapter = PokemonAdapter(pokemonList!!){ pokemon ->
+                               visualizarPokemonDetalle(pokemon.getId())
+                           }
                            binding.rvPokemons.layoutManager = LinearLayoutManager(context)
                            binding.rvPokemons.adapter = pokemonAdapter
                        }else {
@@ -74,8 +85,14 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
                }
            }
 
-
        }
+    }
+
+    private fun visualizarPokemonDetalle(id:Int){
+        val intent = Intent(this,DetallePokemonActivity::class.java)
+        intent.putExtra("id",id)
+        activityResultLauncher.launch(intent)
+        Log.d("launch", id.toString())
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
