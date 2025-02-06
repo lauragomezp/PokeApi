@@ -26,12 +26,14 @@ import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
+class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
+    android.widget.SearchView.OnQueryTextListener {
 
     lateinit var pokemonAdapter: PokemonAdapter
     lateinit var context: Context
     var pokemonList: List<Pokemon>? = null
     private lateinit var binding: ActivityMainBinding
+    var pokemonListBusquedaNombre: List<Pokemon>? = null
 
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
@@ -41,56 +43,62 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         setContentView(binding.root)
         context = this
 
-        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        }
+        binding.svPokemons.setOnQueryTextListener(this)
+
+        activityResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            }
 
         mostrarPokemons()
     }
 
     fun getRetrofit(): Retrofit {
         return Retrofit.Builder().baseUrl("https://pokeapi.co/api/v2/").addConverterFactory(
-            GsonConverterFactory.create()).build()
+            GsonConverterFactory.create()
+        ).build()
     }
 
-    fun mostrarPokemons(){
-       CoroutineScope(Dispatchers.IO).launch {
-           val response = getRetrofit().create(APIService::class.java).getPokemonList(50)
-           Log.d("Prueba", response.code().toString())
-           if(response.isSuccessful){
-               val pokemonResponse = response.body() as PokemonResponse
-               withContext(Dispatchers.Main) {
-                   pokemonList = pokemonResponse.listaPokemons
-                   if (pokemonList != null){
-                       if (pokemonList!!.isNotEmpty()){
-                           pokemonAdapter = PokemonAdapter(pokemonList!!){ pokemon ->
-                               visualizarPokemonDetalle(pokemon.getId())
-                           }
-                           binding.rvPokemons.layoutManager = LinearLayoutManager(context)
-                           binding.rvPokemons.adapter = pokemonAdapter
-                       }else {
-                           Toast.makeText(context, "La lista esta vacia", Toast.LENGTH_SHORT).show()
-                       }
-                   }else{
-                       Toast.makeText(context, "La lista es nula", Toast.LENGTH_SHORT).show()
-                   }
-               }
-           } else {
-               withContext(Dispatchers.Main) {
-                   Toast.makeText(
-                       context,
-                       "No se ha ejecutado correctamente la query. Error: "+response.code(),
-                       Toast.LENGTH_LONG
-                   ).show()
+    fun mostrarPokemons() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = getRetrofit().create(APIService::class.java).getPokemonList(20000)
+            Log.d("Prueba", response.code().toString())
+            if (response.isSuccessful) {
+                val pokemonResponse = response.body() as PokemonResponse
+                withContext(Dispatchers.Main) {
+                    pokemonList = pokemonResponse.listaPokemons
+                    pokemonListBusquedaNombre = pokemonList
+                    if (pokemonList != null) {
+                        if (pokemonList!!.isNotEmpty()) {
+                            pokemonAdapter = PokemonAdapter(pokemonList!!) { pokemon ->
+                                visualizarPokemonDetalle(pokemon.getId())
+                            }
+                            binding.rvPokemons.layoutManager = LinearLayoutManager(context)
+                            binding.rvPokemons.adapter = pokemonAdapter
+                        } else {
+                            Toast.makeText(context, "La lista esta vacia", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    } else {
+                        Toast.makeText(context, "La lista es nula", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "No se ha ejecutado correctamente la query. Error: " + response.code(),
+                        Toast.LENGTH_LONG
+                    ).show()
 
-               }
-           }
+                }
+            }
 
-       }
+        }
     }
 
-    private fun visualizarPokemonDetalle(id:Int){
-        val intent = Intent(this,DetallePokemonActivity::class.java)
-        intent.putExtra("id",id)
+    private fun visualizarPokemonDetalle(id: Int) {
+        val intent = Intent(this, DetallePokemonActivity::class.java)
+        intent.putExtra("id", id)
         activityResultLauncher.launch(intent)
         Log.d("launch", id.toString())
     }
@@ -100,6 +108,18 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
+        // Filtrar por nombre del Pokémon (ignorando mayúsculas/minúsculas)
+        val filteredList = pokemonList?.filter {
+            it.name.contains(newText.orEmpty(), ignoreCase = true)
+        }
+
+        // Actualizar la lista filtrada y el adaptador
+        pokemonListBusquedaNombre = filteredList
+        pokemonAdapter = PokemonAdapter(pokemonListBusquedaNombre!!) { pokemon ->
+            visualizarPokemonDetalle(pokemon.getId())
+        }
+
+        binding.rvPokemons.adapter = pokemonAdapter
         return true
     }
 

@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".ui.DetallePokemonActivity">
 
     <LinearLayout
@@ -16,18 +17,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#000000"
+            android:backgroundTint="#EC4563"
+            android:fontFamily="@font/pokemon_solid"
+            android:padding="20dp"
+            android:shadowColor="#090000"
+            android:shadowRadius="10"
+            android:text="Pokédex"
+            android:textColor="#FFFFFF"
+            android:textSize="34sp" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabVolver"
             android:layout_width="94dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:clickable="true"
-            app:srcCompat="@android:drawable/ic_menu_revert" />
+            android:tint="@android:color/white"
+
+            app:backgroundTint="#f5fef9"
+            app:srcCompat="@android:drawable/ic_menu_revert"
+            app:tint="#ec4563" />
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cvPokemon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp">
+            android:layout_margin="20dp"
+            app:cardBackgroundColor="#615E5E"
+            app:cardCornerRadius="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -39,10 +61,55 @@
                     android:id="@+id/tvNombre"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
                     android:fontFamily="sans-serif-black"
                     android:text="TextView"
-                    android:textSize="20sp" />
+                    android:textColor="#FFFFFF"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/tvType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:paddingRight="10dp"
+                    android:text="TextView"
+                    android:textColor="#FFFFFF" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_margin="10dp"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/tvExperience"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:text="Experience"
+                        android:textColor="#FFFFFF" />
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/tvExperienceResult"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:text="TextView"
+                        android:textColor="#FFFFFF"
+                        android:fontFamily="sans-serif-black"/>
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/divider4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -55,7 +122,8 @@
                         android:id="@+id/tvHeight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Height" />
+                        android:text="Height"
+                        android:textColor="#FFFFFF" />
 
                     <Space
                         android:layout_width="wrap_content"
@@ -67,8 +135,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-black"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textColor="#FFFFFF" />
+
                 </LinearLayout>
+
+                <View
+                    android:id="@+id/divider5"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -80,7 +156,8 @@
                         android:id="@+id/tvWeight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Weight" />
+                        android:text="Weight"
+                        android:textColor="#FFFFFF" />
 
                     <Space
                         android:layout_width="wrap_content"
@@ -92,8 +169,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-black"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textColor="#FFFFFF" />
                 </LinearLayout>
+
+                <View
+                    android:id="@+id/divider3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider" />
 
                 <ImageView
                     android:id="@+id/ivPokemonUrl"
